@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+  localstack:
+    image: localstack/localstack:0.11.3
+    ports:
+      - 5555:5555
+      #- 4567:4567   # apigateway
+      #- 4568:4568  # kinesis
+      - 4569:4569   # dynamodb
+      #- 4570:4570  # dynamodbstreams
+      #- 4571:4571  # elasticache
+      #- 4572:4572   # s3
+      #- 4573:4573  # firehose
+      #- 4574:4574   # lambda
+      #- 4597:4597   # ec2
+    environment:
+      - DATA_DIR=/tmp/localstack/data
+      - DEBUG=1
+      - DEFAULT_REGION=ap-northeast-2
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - LAMBDA_EXECUTOR=docker-reuse
+      - PORT_WEB_UI=5555
+      - HOSTNAME=localstack
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - localstack:/tmp/localstack/data
+
+volumes:
+  localstack:
