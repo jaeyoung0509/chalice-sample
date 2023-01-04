@@ -57,7 +57,7 @@ def dynamo_server(docker: libdocker.APIClient) -> Generator[Any, None, None]:
     finally:
         docker.kill(container["Id"])
         docker.remove_container(container["Id"])
-
+##
 
 @pytest.fixture(scope="session", autouse=True)
 def apply_migrations(dynamo_server: None) -> None:
