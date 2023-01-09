@@ -1,6 +1,8 @@
+import os
+
 from pynamodb.attributes import NumberAttribute, UnicodeAttribute
 from pynamodb.indexes import AllProjection, GlobalSecondaryIndex
-from chalicelib.adapters.repositories.entity.base import Base
+from pynamodb.models import Model
 class ProductNameIndex(GlobalSecondaryIndex["ProductTable"]):
     """
     Represents a global secondary index for ProductTable
@@ -14,12 +16,13 @@ class ProductNameIndex(GlobalSecondaryIndex["ProductTable"]):
     name = UnicodeAttribute(hash_key=True)
     updated_at = NumberAttribute(range_key=True)
 
-class ProductTable(Base):
+
+class ProductTable(Model):
     class Meta:
-        table_name = "product-table"
-        read_capacity_units = 5
-        host = "http://localhost:4569"
         region = "ap-northeast-2"
+        table_name = "product-table"
+        host = os.getenv("LOCAL_DYNAMO")
+        read_capacity_units = 5
         write_capacity_units = 5
 
     id = UnicodeAttribute(range_key=True)

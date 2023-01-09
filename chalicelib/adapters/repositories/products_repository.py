@@ -41,6 +41,6 @@ class ProductRepository(AbstractProductRepository):
         return model.attribute_values
 
     @classmethod
-    def get(cls, partition_key:str) -> dict[str, Any]:
-        model = cls.table.get(partition_key)
+    def get(cls, name:str) -> dict[str, Any]:
+        model = cls.table.get(name)
         return model.attribute_values

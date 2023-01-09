@@ -1,3 +1,4 @@
+import os
 import uuid
 
 from chalice.test import Client
@@ -8,8 +9,7 @@ import docker as libdocker
 from chalice import Chalice
 import warnings
 from chalicelib.adapters.repositories.entity.products import ProductTable
-
-
+from tests.test_helpers import ping_dynamo
 @pytest.fixture(scope="session", autouse=True)
 def app() -> Chalice:
     return chalice_app
@@ -43,25 +43,23 @@ def dynamo_server(docker: libdocker.APIClient) -> Generator[Any, None, None]:
             "DEBUG=1",
             "DEFAULT_REGION=ap-northeast-2",
             "LAMBDA_EXECUTOR=docker-reuse",
-            "PORT_WEB_UI=5555",
             "HOSTNAME=localstack"
 
         ],
         volumes=["/var/run/docker.sock:/var/run/docker.sock",
                  "localstack:/tmp/localstack/data"],
-        host_config=docker.create_host_config(port_bindings={"5555": "5555", "4566": "4566"}),
+        host_config=docker.create_host_config(port_bindings={  "4566": "4566"}),
     )
     docker.start(container=container["Id"])
     try:
+        ping_dynamo(str(os.getenv("LOCAL_DYNAMO")))
         yield container
     finally:
         docker.kill(container["Id"])
         docker.remove_container(container["Id"])
-##
 
 @pytest.fixture(scope="session", autouse=True)
 def apply_migrations(dynamo_server: None) -> None:
-    # https://github.com/pynamodb/PynamoDB/issues/569
     try:
         ProductTable.create_table(wait=True)
     except Exception as e:

@@ -12,7 +12,7 @@ https://stackoverflow.com/questions/51291722/define-a-jsonable-type-using-mypy-p
 
 
 @router.route("/products/{name}", methods=["GET"])
-def get_product_by_name(name: str) -> JSONType:
+def get_product(name: str) -> JSONType:
     """
     :request: name:str
     :return: ProductSchemaOut
@@ -21,7 +21,7 @@ def get_product_by_name(name: str) -> JSONType:
     TODO:
     - query pattern
     """
-    return ProductRepository.get_by_name(name).json()
+    return ProductRepository.get(name)
 
 
 @router.route("/products", methods=["POST"])
